@@ -1,0 +1,60 @@
+package com.example.cruddealunos.controller;
+
+import com.example.escola.model.Aluno;
+import com.example.escola.service.AlunoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/alunos")
+@Tag(name = "Aluno", description = "API para gestão de alunos")
+public class AlunoController {
+
+    private final AlunoService alunoService;
+
+    public AlunoController(AlunoService alunoService) {
+        this.alunoService = alunoService;
+    }
+
+    @GetMapping
+    @Operation(summary = "Listar todos os alunos")
+    public List<Aluno> listarTodos() {
+        return alunoService.listarTodos();
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar aluno por ID")
+    public ResponseEntity<Aluno> buscarPorId(@PathVariable Long id) {
+        return alunoService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    @Operation(summary = "Cadastrar novo aluno")
+    public Aluno cadastrar(@RequestBody Aluno aluno) {
+        return alunoService.cadastrar(aluno);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar dados de um aluno")
+    public ResponseEntity<Aluno> atualizar(@PathVariable Long id, @RequestBody Aluno alunoAtualizado) {
+        return alunoService.atualizar(id, alunoAtualizado)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar aluno")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        if (alunoService.deletar(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+}
+

@@ -1,0 +1,47 @@
+package com.example.cruddealunos.service;
+
+import com.example.escola.model.Aluno;
+import com.example.escola.repository.AlunoRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class AlunoService {
+
+    private final AlunoRepository alunoRepository;
+
+    public AlunoService(AlunoRepository alunoRepository) {
+        this.alunoRepository = alunoRepository;
+    }
+
+    public List<Aluno> listarTodos() {
+        return alunoRepository.findAll();
+    }
+
+    public Optional<Aluno> buscarPorId(Long id) {
+        return alunoRepository.findById(id);
+    }
+
+    public Aluno cadastrar(Aluno aluno) {
+        return alunoRepository.save(aluno);
+    }
+
+    public Optional<Aluno> atualizar(Long id, Aluno alunoAtualizado) {
+        return alunoRepository.findById(id).map(aluno -> {
+            aluno.setNome(alunoAtualizado.getNome());
+            aluno.setEmail(alunoAtualizado.getEmail());
+            return alunoRepository.save(aluno);
+        });
+    }
+
+    public boolean deletar(Long id) {
+        if (alunoRepository.existsById(id)) {
+            alunoRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+}
+
